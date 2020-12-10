@@ -7,6 +7,8 @@ const db = require('./db');
 const app = express();
 const port = process.env.PORT || 3001;
 
+var ids = 1;
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -17,9 +19,12 @@ app.get('/', (request, response) => {
 
 app.get('/place', (request, response) => {
     let name = request.body.name;
-    let content = request.body.content;
-    let rating = request.body.rating;
-    db.setPlace(name, content, rating).then(x => response.json(x));
+    let city = request.body.city;
+    let state = request.body.state;
+    let category = request.body.category;
+    let placeid = ids;
+    ids += 1;
+    db.setPlace(name, city, state, category, placeid).then(x => response.json(x));
 })
 
 app.get('/places', (request, response) => {
@@ -27,13 +32,11 @@ app.get('/places', (request, response) => {
 })
 
 app.get('/review/:placeId', (request, response) => {
-    // Not sure how to assign a unique placeid whenever creating a new place,
-    // maybe keep track of a variable and increment it?
     let placeid = request.body.placeid;
     let username = request.body.username;
     let content = request.body.content;
     let rating = request.body.rating;
-    db.addReview(username, content, rating).then(x => response.json({message: "Score saved"}));
+    db.addReview(placeid, username, content, rating).then(x => response.json({message: "Score saved"}));
 })
 
 app.get('/search/:searchTerm/:location', (request, response) => {
