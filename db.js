@@ -23,9 +23,15 @@ function getSearch (city,state, category){
     .then(x => x.rows);
 }
 
-function setPlace (city, state, category){
-    return postgrePool.query("insert into mynearbyplaces.places (city, state, category) values ($1, $2, $3)", [city, state, category])
+function setPlace (name, city, state, category){
+    return postgrePool.query("insert into mynearbyplaces.places (name, city, state, category) values ($1, $2, $3, $4)", [name, city, state, category])
     .then(x => x.rows);
 }
 
-module.exports = { getPlaces, getSearch, setPlace }
+// not going to work because I have no placeIds set up
+function setReview (placeId, review){
+    return postgrePool.query("insert into mynearbyplaces.places (reviews) values ($1) where placeId = $2", [review, placeId])
+    .then(x => x.rows);
+}
+
+module.exports = { getPlaces, getSearch, setPlace, setReview }
