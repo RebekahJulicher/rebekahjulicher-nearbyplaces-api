@@ -12,18 +12,20 @@ const postgrePool = new Pool({
     ssl: { rejectUnauthorized: false }
 });
 
-function getQuizzes (){
-    return postgrePool.query("select id, title from imagequiz.quiz").then(x => x.rows);
+function getPlaces (){
+    return postgrePool.query("select * from mynearbyplaces.places").then(x => x.rows);
 }
 
-function getQuestions (quizid){
-    return postgrePool.query("select q.choices, q.answer, q.id from imagequiz.question q join imagequiz.quizquestions q2 on q.id = q2.questionid where quizid = $1", [quizid])
+//This isn't going to work because I need something like my original search
+//function in my project 1
+function getSearch (city,state, category){
+    return postgrePool.query("select * from mynearbyplaces.places q where city = $1 AND state = $2 AND category = $3", [city, state, category])
     .then(x => x.rows);
 }
 
-function saveScore (username, quizid, score){
-    return postgrePool.query("insert into imagequiz.score (username, quizid, score) values ($1, $2, $3)", [username, quizid, score])
+function setPlace (city, state, category){
+    return postgrePool.query("insert into mynearbyplaces.places (city, state, category) values ($1, $2, $3)", [city, state, category])
     .then(x => x.rows);
 }
 
-module.exports = { getQuizzes, getQuestions, saveScore }
+module.exports = { getPlaces, getSearch, setPlace }

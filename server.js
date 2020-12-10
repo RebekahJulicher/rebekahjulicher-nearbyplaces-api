@@ -12,23 +12,37 @@ app.use(bodyParser.json());
 
 
 app.get('/', (request, response) => {
-    response.send('Welcome to my Image Quiz API');
+    response.send('Welcome to my NearbyPlaces API');
 });
 
 app.get('/place', (request, response) => {
-    db.getQuizzes().then(x => response.json(x));
+    let name = request.body.name;
+    let content = request.body.content;
+    let rating = request.body.rating;
+    db.setPlace(name, content, rating).then(x => response.json(x));
 })
 
-app.get('/quiz/:id', (request, response) => {
-    db.getQuestions(request.params.id).then(x => response.json(x));
+app.get('/places', (request, response) => {
+    db.getPlaces().then(x => response.json(x));
 })
 
-app.post('/score', (request, response) => {
+app.get('/review/:placeId', (request, response) => {
+    // Not sure how to assign a unique placeid whenever creating a new place,
+    // maybe keep track of a variable and increment it?
+    let placeid = request.body.placeid;
     let username = request.body.username;
-    let quizid = request.body.quizid;
-    let score = request.body.score;
-    db.saveScore(username, quizid, score).then(x => response.json({message: "Score saved"}));
-});
+    let content = request.body.content;
+    let rating = request.body.rating;
+    db.addReview(username, content, rating).then(x => response.json({message: "Score saved"}));
+})
+
+app.get('/search/:searchTerm/:location', (request, response) => {
+    // SearchTerm? What is this?
+    let city = request.body.city;
+    let category = request.body.category;
+    let state = request.body.state;
+    db.getSearch(city, state, category).then(x => response.json(x));
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
