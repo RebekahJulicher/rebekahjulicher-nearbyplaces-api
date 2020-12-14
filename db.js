@@ -11,7 +11,7 @@ const postgrePool = new Pool({
     connectionString: process.env.DATABASE_URL ? process.env.DATABASE_URL : postgreConnectionString,
     ssl: { rejectUnauthorized: false }
 });
-
+ 
 function getPlaces (){
     return postgrePool.query("select * from mynearbyplaces.place").then(x => x.rows);
 }
