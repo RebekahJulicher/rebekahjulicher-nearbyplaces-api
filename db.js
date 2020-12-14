@@ -13,24 +13,35 @@ const postgrePool = new Pool({
 });
 
 function getPlaces (){
-    return postgrePool.query("select * from mynearbyplaces.places").then(x => x.rows);
+    return postgrePool.query("select * from mynearbyplaces.place").then(x => x.rows);
 }
 
-//This isn't going to work because I need something like my original search
-//function in my project 1
 function getSearch (city,state, category){
-    return postgrePool.query("select * from mynearbyplaces.places q where city = $1 AND state = $2 AND category = $3", [city, state, category])
+    let query = "select * from mynearbyplaces.place p where ";
+    let conditions = [];
+    if (city.length > 0){
+        conditions.push(`city = ${city}`);
+    }
+    if (state.length > 0){
+        conditions.push(`state = ${state}`);
+    }
+    if (category.length > 0){
+        conditions.push(`category = ${category}`);
+    }
+    query += conditions.join(" AND ");
+
+    return postgrePool.query(query)
     .then(x => x.rows);
 }
 
-function setPlace (name, city, state, category, placeid){
-    return postgrePool.query("insert into mynearbyplaces.places (name, city, state, category, placeid) values ($1, $2, $3, $4, $5)", [name, city, state, category, placeid])
+function setPlace (name, city, state, category){
+    return postgrePool.query("insert into mynearbyplaces.place (name, city, state, category) values ($1, $2, $3, $4)", [name, city, state, category])
     .then(x => x.rows);
 }
 
 // not going to work because I have no placeIds set up
 function setReview (placeid, review){
-    return postgrePool.query("insert into mynearbyplaces.places (reviews) values ($1) where placeid = $2", [review, placeid])
+    return postgrePool.query("insert into mynearbyplaces.review (content, rating, username, placeid) values ($1, $2, $3, $4)", [review.content, review.rating, review.username, placeid])
     .then(x => x.rows);
 }
 

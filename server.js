@@ -1,7 +1,6 @@
 const express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
-var data = require('./data');
 const db = require('./db');
 
 const app = express();
@@ -28,7 +27,8 @@ app.get('/place', (request, response) => {
 })
 
 app.get('/places', (request, response) => {
-    db.getPlaces().then(x => response.json(x));
+    db.getPlaces().then(x => response.json(x))
+    .catch(e => response.status(500).json({error: "error happened " + e}));
 })
 
 app.get('/review/:placeId', (request, response) => {
@@ -39,8 +39,7 @@ app.get('/review/:placeId', (request, response) => {
     db.addReview(placeid, username, content, rating).then(x => response.json({message: "Score saved"}));
 })
 
-app.get('/search/:searchTerm/:location', (request, response) => {
-    // SearchTerm? What is this?
+app.get('/search', (request, response) => {
     let city = request.body.city;
     let category = request.body.category;
     let state = request.body.state;
